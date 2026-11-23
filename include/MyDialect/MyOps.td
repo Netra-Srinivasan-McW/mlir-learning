@@ -13,16 +13,24 @@ include "mlir/IR/BuiltinAttributeInterfaces.td"
 
 class MyDialect_Op<string mnemonic, list<Trait> traits = []> : Op<MyDialect, mnemonic, traits>;
 
-def AddOp : MyDialect_Op<"sum", [SameOperandsAndResultElementType]> {
+def AddOp : MyDialect_Op<"sum", [SameOperandsAndResultElementType, AttrSizedOperandSegments]> {
     let summary = "Addition operation in a custom dialect named 'MyDialect'";
 
+    // let arguments = (ins
+    //     AnyTypeOf<[AnyInteger, AnyFloat]>:$input1,
+    //     AnyTypeOf<[AnyInteger, AnyFloat]>:$input2
+    // );
     let arguments = (ins
-        AnyTypeOf<[AnyInteger, AnyFloat]>:$input1,
-        AnyTypeOf<[AnyInteger, AnyFloat]>:$input2
+        Optional<AnyTypeOf<[AnyInteger, AnyFloat]>>:$input1,
+        Optional<AnyTypeOf<[AnyInteger, AnyFloat]>>:$input2
     );
     let results = (outs
-        AnyTypeOf<[AnyInteger, AnyFloat]>:$res
+        Optional<AnyTypeOf<[AnyInteger, AnyFloat]>>:$res
     );
+    // custom assemblyFormat to handle optional values
+    let assemblyFormat = [{
+        (`input1` `=` $input1^ `:` type($input1))? (`,` `input2` `=` $input2^ `:` type($input2))? attr-dict `->` type($res)
+    }];
 }
 
 def ConstantOp : MyDialect_Op<"const", [Pure]> {
@@ -30,7 +38,8 @@ def ConstantOp : MyDialect_Op<"const", [Pure]> {
 
     let arguments = (ins TypedAttrInterface:$input);
     let results = (outs AnyType:$res);
-    let assemblyFormat = "$input attr-dict `:` type($res)";
+    let assemblyFormat = "$input attr-dict `->` type($res)";
+    // let assemblyFormat = "attr-dict $input";
 }
 
 #endif // MY_OPS
