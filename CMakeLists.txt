@@ -39,18 +39,29 @@ mlir_tablegen(MyOps.cpp.inc -gen-op-defs)
 
 add_public_tablegen_target(MyDialectOpsIncGen)
 
+set(LLVM_TARGET_DEFINITIONS ${PROJECT_SOURCE_DIR}/include/MyDialect/MyDialectToTosa.td)
+mlir_tablegen(LowerToTosa.inc -gen-rewriters)
+add_public_tablegen_target(MyDialectLowerToTosaIncGen)
+
 # build custom dialect library
 add_library(MyDialect
     lib/MyDialect.cpp
     lib/MyOps.cpp
+    lib/LowerToTosa.cpp
 )
 
 add_dependencies(MyDialect
     MyDialectDialectIncGen
     MyDialectOpsIncGen
+    MyDialectLowerToTosaIncGen
 )
 
-target_link_libraries(MyDialect PUBLIC MLIRIR)
+target_link_libraries(MyDialect PUBLIC 
+    MLIRIR 
+    MLIRPass 
+    MLIRTransforms 
+    MLIRTosaDialect
+)
 
 # build custom optimizer tool
 add_executable(my-opt tools/my-opt.cpp)
@@ -62,4 +73,5 @@ target_link_libraries(my-opt PRIVATE
     MyDialect
     MLIROptLib
     MLIRFuncDialect
+    MLIRTosaDialect
 )

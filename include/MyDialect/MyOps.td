@@ -7,13 +7,15 @@ include "mlir/IR/OpBase.td"
 include "mlir/Interfaces/SideEffectInterfaces.td"
 include "mlir/IR/BuiltinAttributeInterfaces.td"
 
+include "mlir/Dialect/Tosa/IR/TosaTypesBase.td" // for Tosa_Shape access
+
 // Base class for operations in MyDialect
 // Op - base class provided by MLIR
 // Below is an inherited class, can be written in MyDialect.td also
 
 class MyDialect_Op<string mnemonic, list<Trait> traits = []> : Op<MyDialect, mnemonic, traits>;
 
-def AddOp : MyDialect_Op<"sum", [SameOperandsAndResultElementType, AttrSizedOperandSegments]> {
+def AddOp : MyDialect_Op<"sum", [SameOperandsAndResultElementType]> {
     let summary = "Addition operation in a custom dialect named 'MyDialect'";
 
     // let arguments = (ins
@@ -21,15 +23,15 @@ def AddOp : MyDialect_Op<"sum", [SameOperandsAndResultElementType, AttrSizedOper
     //     AnyTypeOf<[AnyInteger, AnyFloat]>:$input2
     // );
     let arguments = (ins
-        Optional<AnyTypeOf<[AnyInteger, AnyFloat]>>:$input1,
-        Optional<AnyTypeOf<[AnyInteger, AnyFloat]>>:$input2
+        AnyType:$input1,
+        AnyType:$input2
     );
     let results = (outs
-        Optional<AnyTypeOf<[AnyInteger, AnyFloat]>>:$res
+        AnyType:$res
     );
-    // custom assemblyFormat to handle optional values
+    // custom assemblyFormat
     let assemblyFormat = [{
-        (`input1` `=` $input1^ `:` type($input1))? (`,` `input2` `=` $input2^ `:` type($input2))? attr-dict `->` type($res)
+        `input1` `=` $input1 `:` type($input1) `,` `input2` `=` $input2 `:` type($input2) attr-dict `->` type($res)
     }];
 }
 
