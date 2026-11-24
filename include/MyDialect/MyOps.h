@@ -8,6 +8,9 @@
 #include "mlir/Bytecode/BytecodeOpInterface.h" // for attributes
 // #include "mlir/IR/BuiltinTypes.h"
 
+// Add this header so mlir::tosa::shapeType is known, to be included if using Tosa_Shape in MyOps.td
+// #include "mlir/Dialect/Tosa/IR/TosaOps.h" 
+
 #define GET_OP_CLASSES
 #include "MyOps.h.inc"
 
