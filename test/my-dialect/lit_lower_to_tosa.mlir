@@ -15,3 +15,7 @@ func.func @test_shape_add() -> !tosa.shape<3> {
   %res = mydialect.sum input1 = %s1 : !tosa.shape<3>, input2 = %s2 : !tosa.shape<3> -> !tosa.shape<3>
   return %res : !tosa.shape<3>
 }
+
+// when CHECK is found here it tries to match to any line of the output, if it is found to match then that line of output is marked as consumed.
+// after that if you try to test the same line of output using a CHECK here in lit file, then an error will be raised, stating that the check has failed
+// putting <double-slash>CHECK<colon> or CHECK<colon> inside comment will raise error, becuase FILECHECK looks CHECK<colon> regardless of position
