@@ -6,6 +6,14 @@ find_package(MLIR REQUIRED CONFIG)
 
 list(APPEND CMAKE_MODULE_PATH "${MLIR_CMAKE_DIR}")
 
+set(MY_DIALECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(MY_DIALECT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+set(MLIR_BINARY_DIR ${CMAKE_BINARY_DIR})
+
+if (NOT DEFINED LLVM_TOOLS_DIR)
+  set(LLVM_TOOLS_DIR ${LLVM_TOOLS_BINARY_DIR})
+endif()
+
 include(AddLLVM)
 include(AddMLIR)
 
@@ -75,3 +83,5 @@ target_link_libraries(my-opt PRIVATE
     MLIRFuncDialect
     MLIRTosaDialect
 )
+
+add_subdirectory(test)

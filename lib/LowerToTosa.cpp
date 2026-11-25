@@ -14,12 +14,13 @@ using namespace mlir;
 
 namespace {
 
-// 1. Rewrite Pattern - const op (MyDialect -> Tosa)
+// 1. Conversion Pattern - const op (MyDialect -> Tosa)
 struct ConstOpLowering : public OpConversionPattern<mydialect::ConstantOp> {
     // rementioned for inheriting constructors
     using OpConversionPattern<mydialect::ConstantOp>::OpConversionPattern;
 
     // LogicalResult - like bool for mlir returns mlir::success() or mlir::failure()
+    // not necessary for matchandrewrite to be the only funciton name, can be some other name also
     LogicalResult matchAndRewrite(mydialect::ConstantOp op,  OpAdaptor adaptor,
                   ConversionPatternRewriter &rewriter) const override {
         // 1. Validate result is a ranked tensor
