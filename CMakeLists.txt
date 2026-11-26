@@ -34,7 +34,6 @@ set(LLVM_TARGET_DEFINITIONS
 
 mlir_tablegen(MyDialect.h.inc -gen-dialect-decls)
 mlir_tablegen(MyDialect.cpp.inc -gen-dialect-defs)
-
 add_public_tablegen_target(MyDialectDialectIncGen)
 
 # operation declarations and definitions
@@ -44,24 +43,33 @@ set(LLVM_TARGET_DEFINITIONS
 
 mlir_tablegen(MyOps.h.inc -gen-op-decls)
 mlir_tablegen(MyOps.cpp.inc -gen-op-defs)
-
 add_public_tablegen_target(MyDialectOpsIncGen)
+
+# pattern rewrite - only .inc since it is an internal implementation
+# and everything is defined in a single file
 
 set(LLVM_TARGET_DEFINITIONS ${PROJECT_SOURCE_DIR}/include/MyDialect/MyDialectToTosa.td)
 mlir_tablegen(LowerToTosa.inc -gen-rewriters)
 add_public_tablegen_target(MyDialectLowerToTosaIncGen)
+
+set(LLVM_TARGET_DEFINITIONS ${PROJECT_SOURCE_DIR}/include/MyDialect/FuseAddMul.td)
+mlir_tablegen(FuseAddMul.inc -gen-rewriters)
+add_public_tablegen_target(FuseAddMulIncGen)
 
 # build custom dialect library
 add_library(MyDialect
     lib/MyDialect.cpp
     lib/MyOps.cpp
     lib/LowerToTosa.cpp
+    lib/FuseAddMul.cpp
 )
 
 add_dependencies(MyDialect
     MyDialectDialectIncGen
     MyDialectOpsIncGen
     MyDialectLowerToTosaIncGen
+    FuseAddMulIncGen
+    
 )
 
 target_link_libraries(MyDialect PUBLIC 
