@@ -8,7 +8,11 @@
 #include "mlir/Transforms/DialectConversion.h"
 
 // including tablegen generated patterns
-#include "LowerToTosa.inc"
+// placing this inside an anonymous namespace so that it doesn't overlap
+// with same populate function in another pass
+namespace { 
+#include "LowerToTosa.inc" 
+}
 
 using namespace mlir;
 

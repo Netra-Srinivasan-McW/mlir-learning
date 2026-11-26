@@ -6,6 +6,8 @@
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/Dialect/Tosa/IR/TosaOps.h"
 
+#include "mlir/Transforms/Passes.h" // for --canonicalize registration
+
 int main(int argc, char **argv) {
     mlir::DialectRegistry registry;
 
@@ -16,6 +18,10 @@ int main(int argc, char **argv) {
 
     // Register pass CLI flag
     mlir::mydialect::registerlowerMyDialectToTosaPass();
+    mlir::mydialect::registerFuseAddMulPass();
+
+    // Register MLIR's standard transform passes (enables --canonicalize, --cse, etc.)
+    mlir::registerCanonicalizerPass();
 
     return mlir::failed(
         mlir::MlirOptMain(
